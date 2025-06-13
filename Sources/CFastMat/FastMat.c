@@ -10,7 +10,7 @@
 #include "FastMat.h"
 
 #include <stdlib.h>
-#include <time.h>    // time()
+#include <time.h>
 
 #define ARCUSTABLEBITS 9
 #define ARCUSTABLESIZE (1 + (1 << ARCUSTABLEBITS))
@@ -69,7 +69,7 @@ Fixed NormalizeVector(long n, Fixed *v) {
     l = VectorLength(n, v);
     if (l)
         while (n--) {
-            *v = FDivNZ(*v, l);
+            *v = FDiv(*v, l);
             v++;
         }
 
@@ -521,7 +521,7 @@ Fixed FRadArcTan2(Fixed x, Fixed y) {
     if (x || y) {
         absX = x < 0 ? -x : x;
         absY = y < 0 ? -y : y;
-        ratio = absX > absY ? FDivNZ(absY, absX) : FDivNZ(absX, absY);
+        ratio = absX > absY ? FDiv(absY, absX) : FDiv(absX, absY);
         ratio += 1 << (15 - ARCUSTABLEBITS);
         ratio >>= 16 - ARCUSTABLEBITS;
 
@@ -548,7 +548,7 @@ Fixed FOneArcTan2(Fixed x, Fixed y) {
     if (x || y) {
         absX = x < 0 ? -x : x;
         absY = y < 0 ? -y : y;
-        ratio = absX > absY ? FDivNZ(absY, absX) : FDivNZ(absX, absY);
+        ratio = absX > absY ? FDiv(absY, absX) : FDiv(absX, absY);
         ratio += 1 << (15 - ARCUSTABLEBITS);
         ratio >>= 16 - ARCUSTABLEBITS;
 
@@ -573,9 +573,9 @@ void FindSpaceAngle(Fixed *delta, Fixed *heading, Fixed *pitch) {
     headingA = FOneArcTan2(delta[2], delta[0]);
 
     if ((headingA - 0x2000) & 0x4000)
-        sideLen = FDivNZ(delta[2], FOneCos(headingA));
+        sideLen = FDiv(delta[2], FOneCos(headingA));
     else
-        sideLen = FDivNZ(delta[0], FOneSin(headingA));
+        sideLen = FDiv(delta[0], FOneSin(headingA));
 
     *heading = headingA;
     *pitch = FOneArcTan2(sideLen, -delta[1]);
@@ -593,9 +593,9 @@ void FindSpaceAngleAndNormalize(Fixed *delta, Fixed *heading, Fixed *pitch) {
     tempSin = FOneSin(headingA);
 
     if ((headingA - 0x2000) & 0x4000)
-        sideLen = FDivNZ(delta[2], tempCos);
+        sideLen = FDiv(delta[2], tempCos);
     else
-        sideLen = FDivNZ(delta[0], tempSin);
+        sideLen = FDiv(delta[0], tempSin);
 
     pitchA = FOneArcTan2(sideLen, delta[1]);
 
