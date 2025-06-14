@@ -5,6 +5,14 @@
 //  Created by Daniel Watson on 6/13/25.
 //
 
+extension MutableCollection {
+    mutating func updateEach(_ update: (inout Element) -> Void) {
+        for i in indices {
+            update(&self[i])
+        }
+    }
+}
+
 public struct Matrix {
     public enum ResetType {
         case zero
@@ -47,27 +55,57 @@ public struct Matrix {
     }
 
     public mutating func rotateX(_ s: Fixed, _ c: Fixed) {
-        for var col in columns {
-            let t = col[1]
-            col[1] = FMul(t, c) - FMul(col[2], s)
-            col[2] = FMul(t, s) + FMul(col[2], c)
+        columns.updateEach { col in
+            let t1 = col[1]
+            let t2 = col[2]
+            col[1] = FMul(t1, c) - FMul(t2, s)
+            col[2] = FMul(t1, s) + FMul(t2, c)
         }
     }
 
     public mutating func rotateY(_ s: Fixed, _ c: Fixed) {
-        for var col in columns {
-            let t = col[0]
-            col[0] = FMul(t, c) + FMul(col[2], s)
-            col[2] = FMul(col[2], c) - FMul(t, s)
+        columns.updateEach { col in
+            let t0 = col[0]
+            let t2 = col[2]
+            col[0] = FMul(t0, c) + FMul(t2, s)
+            col[2] = FMul(t2, c) - FMul(t0, s)
         }
     }
 
     public mutating func rotateZ(_ s: Fixed, _ c: Fixed) {
-        for var col in columns {
-            let t = col[0]
-            col[0] = FMul(t, c) - FMul(col[1], s)
-            col[1] = FMul(t, s) + FMul(col[1], c)
+        columns.updateEach { col in
+            let t0 = col[0]
+            let t1 = col[1]
+            col[0] = FMul(t0, c) - FMul(t1, s)
+            col[1] = FMul(t0, s) + FMul(t1, c)
         }
+    }
+
+    public mutating func inverse(of m: Matrix) {
+        columns[0][0] = m[0][0]
+        columns[0][1] = m[1][0]
+        columns[0][2] = m[2][0]
+        columns[0][3] = 0
+
+        columns[1][0] = m[0][1]
+        columns[1][1] = m[1][1]
+        columns[1][2] = m[2][1]
+        columns[1][3] = 0
+
+        columns[2][0] = m[0][2]
+        columns[2][1] = m[1][2]
+        columns[2][2] = m[2][2]
+        columns[2][3] = 0
+
+        columns[3][0] = 0
+        columns[3][1] = 0
+        columns[3][2] = 0
+        columns[3][3] = FIX1
+
+        let temp = multiply(m[3])
+        columns[3][0] = -temp[0]
+        columns[3][1] = -temp[1]
+        columns[3][2] = -temp[2]
     }
 
     public func multiply(_ v: Vector) -> Vector {

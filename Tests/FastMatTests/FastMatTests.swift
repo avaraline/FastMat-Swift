@@ -1,12 +1,13 @@
 import Testing
-@testable import FastMat
+
 @testable import CFastMat
+@testable import FastMat
 
 // Assuming we don't deal with super large magnitude floats.
-let fixedFloatRange = Float(Fixed.min / 65536) ... Float(Fixed.max / 65536)
+let fixedFloatRange = Float(Fixed.min / 65536)...Float(Fixed.max / 65536)
 
-let smallFixedRange = -Fixed(1 << 15) ... Fixed(1 << 15)
-let mediumFixedRange = -Fixed(1 << 22) ... Fixed(1 << 22)
+let smallFixedRange = -Fixed(1 << 15)...Fixed(1 << 15)
+let mediumFixedRange = -Fixed(1 << 22)...Fixed(1 << 22)
 
 @Test func testToFloat() async throws {
     for _ in 0..<1000 {
@@ -95,30 +96,46 @@ func zeroMatrix() -> CFastMat.Matrix {
 }
 
 func matrixEquals(_ m1: FastMat.Matrix, _ m2: CFastMat.Matrix) -> Bool {
-    m1[0][0] == m2.0.0 &&
-    m1[0][1] == m2.0.1 &&
-    m1[0][2] == m2.0.2 &&
-    m1[0][3] == m2.0.3 &&
-    m1[1][0] == m2.1.0 &&
-    m1[1][1] == m2.1.1 &&
-    m1[1][2] == m2.1.2 &&
-    m1[1][3] == m2.1.3 &&
-    m1[2][0] == m2.2.0 &&
-    m1[2][1] == m2.2.1 &&
-    m1[2][2] == m2.2.2 &&
-    m1[2][3] == m2.2.3 &&
-    m1[3][0] == m2.3.0 &&
-    m1[3][1] == m2.3.1 &&
-    m1[3][2] == m2.3.2 &&
-    m1[3][3] == m2.3.3
+    m1[0][0] == m2.0.0 && m1[0][1] == m2.0.1 && m1[0][2] == m2.0.2 && m1[0][3] == m2.0.3
+        && m1[1][0] == m2.1.0 && m1[1][1] == m2.1.1 && m1[1][2] == m2.1.2 && m1[1][3] == m2.1.3
+        && m1[2][0] == m2.2.0 && m1[2][1] == m2.2.1 && m1[2][2] == m2.2.2 && m1[2][3] == m2.2.3
+        && m1[3][0] == m2.3.0 && m1[3][1] == m2.3.1 && m1[3][2] == m2.3.2 && m1[3][3] == m2.3.3
 }
 
 @Test func testMatrix() async throws {
-    var cm = zeroMatrix()
+    var cm = zeroMatrix(), cmi = zeroMatrix()
     CFastMat.OneMatrix(&cm)
 
-    var m = FastMat.Matrix()
+    var m = FastMat.Matrix(), i = FastMat.Matrix()
     m.reset(to: .identity)
 
     #expect(matrixEquals(m, cm))
+
+    let dx = mediumFixedRange.randomElement()!
+    let dy = mediumFixedRange.randomElement()!
+    let dz = mediumFixedRange.randomElement()!
+
+    CFastMat.MTranslate(dx, dy, dz, &cm)
+    m.translate(dx, dy, dz)
+
+    #expect(matrixEquals(m, cm))
+
+    let s = CFastMat.FRadSin(mediumFixedRange.randomElement()!)
+    let c = CFastMat.FRadCos(mediumFixedRange.randomElement()!)
+
+    CFastMat.MRotateX(s, c, &cm)
+    m.rotateX(s, c)
+    #expect(matrixEquals(m, cm))
+
+    CFastMat.MRotateY(s, c, &cm)
+    m.rotateY(s, c)
+    #expect(matrixEquals(m, cm))
+
+    CFastMat.MRotateZ(s, c, &cm)
+    m.rotateZ(s, c)
+    #expect(matrixEquals(m, cm))
+
+    CFastMat.InverseTransform(&cm, &cmi)
+    i.inverse(of: m)
+    #expect(matrixEquals(i, cmi))
 }
