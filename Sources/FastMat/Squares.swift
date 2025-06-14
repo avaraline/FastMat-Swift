@@ -7,9 +7,9 @@
 
 func FSqrt(_ n: Fixed) -> Fixed {
     // https://github.com/chmike/fpsqrt/blob/master/fpsqrt.c
-    var r = n
-    var b: Fixed = 0x4000_0000
-    var q: Fixed = 0
+    var r: UInt32 = UInt32(bitPattern: n)
+    var b: UInt32 = 0x4000_0000
+    var q: UInt32 = 0
     while b > 0x40 {
         let t = q + b
         if r >= t {
@@ -20,7 +20,7 @@ func FSqrt(_ n: Fixed) -> Fixed {
         b >>= 1
     }
     q >>= 8
-    return q
+    return Fixed(bitPattern: q)
 }
 
 struct SquareAccumulator {

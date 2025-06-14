@@ -55,3 +55,70 @@ let mediumFixedRange = -Fixed(1 << 22) ... Fixed(1 << 22)
         #expect(FastMat.FRadToOne(a) == CFastMat.FRadToOne(a))
     }
 }
+
+@Test func testTrig() async throws {
+    CFastMat.InitMatrix()
+
+    for _ in 0..<1000 {
+        let a = Fixed.random(in: smallFixedRange)
+        let b = Fixed.random(in: smallFixedRange)
+        #expect(FastMat.FRadSin(a) == CFastMat.FRadSin(a))
+        #expect(FastMat.FRadCos(a) == CFastMat.FRadCos(a))
+        #expect(FastMat.FRadTan(a) == CFastMat.FRadTan(a))
+        #expect(FastMat.FDegSin(a) == CFastMat.FDegSin(a))
+        #expect(FastMat.FDegCos(a) == CFastMat.FDegCos(a))
+        #expect(FastMat.FDegTan(a) == CFastMat.FDegTan(a))
+        #expect(FastMat.FOneSin(a) == CFastMat.FOneSin(a))
+        #expect(FastMat.FOneCos(a) == CFastMat.FOneCos(a))
+        #expect(FastMat.FOneTan(a) == CFastMat.FOneTan(a))
+        #expect(FastMat.FRadArcCos(a) == CFastMat.FRadArcCos(a))
+        #expect(FastMat.FRadArcSin(a) == CFastMat.FRadArcSin(a))
+        #expect(FastMat.FRadArcTan2(a, b) == CFastMat.FRadArcTan2(a, b))
+        #expect(FastMat.FOneArcTan2(a, b) == CFastMat.FOneArcTan2(a, b))
+    }
+}
+
+@Test func testSquares() async throws {
+    for _ in 0..<1000 {
+        let a = Fixed.random(in: mediumFixedRange)
+        #expect(FastMat.FSqrt(a) == CFastMat.FSqrt(a))
+    }
+}
+
+func zeroMatrix() -> CFastMat.Matrix {
+    return CFastMat.Matrix(
+        (Int32(0), Int32(0), Int32(0), Int32(0)),
+        (Int32(0), Int32(0), Int32(0), Int32(0)),
+        (Int32(0), Int32(0), Int32(0), Int32(0)),
+        (Int32(0), Int32(0), Int32(0), Int32(0))
+    )
+}
+
+func matrixEquals(_ m1: FastMat.Matrix, _ m2: CFastMat.Matrix) -> Bool {
+    m1[0][0] == m2.0.0 &&
+    m1[0][1] == m2.0.1 &&
+    m1[0][2] == m2.0.2 &&
+    m1[0][3] == m2.0.3 &&
+    m1[1][0] == m2.1.0 &&
+    m1[1][1] == m2.1.1 &&
+    m1[1][2] == m2.1.2 &&
+    m1[1][3] == m2.1.3 &&
+    m1[2][0] == m2.2.0 &&
+    m1[2][1] == m2.2.1 &&
+    m1[2][2] == m2.2.2 &&
+    m1[2][3] == m2.2.3 &&
+    m1[3][0] == m2.3.0 &&
+    m1[3][1] == m2.3.1 &&
+    m1[3][2] == m2.3.2 &&
+    m1[3][3] == m2.3.3
+}
+
+@Test func testMatrix() async throws {
+    var cm = zeroMatrix()
+    CFastMat.OneMatrix(&cm)
+
+    var m = FastMat.Matrix()
+    m.reset(to: .identity)
+
+    #expect(matrixEquals(m, cm))
+}
