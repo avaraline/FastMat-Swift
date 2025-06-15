@@ -119,7 +119,3 @@ func FOneArcTan2(_ x: Fixed, _ y: Fixed) -> Fixed {
 
     return 0
 }
-/*
-void FindSpaceAngle(Fixed *delta, Fixed *heading, Fixed *pitch);
-void FindSpaceAngleAndNormalize(Fixed *delta, Fixed *heading, Fixed *pitch);
-*/

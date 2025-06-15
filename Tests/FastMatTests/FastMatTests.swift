@@ -79,6 +79,27 @@ let mediumFixedRange = -Fixed(1 << 22)...Fixed(1 << 22)
     }
 }
 
+@Test func testSpaceAngle() async throws {
+    CFastMat.InitMatrix()
+
+    for _ in 0..<1000 {
+        let x = Fixed.random(in: mediumFixedRange)
+        let y = Fixed.random(in: mediumFixedRange)
+        let z = Fixed.random(in: mediumFixedRange)
+        let w = Fixed.random(in: mediumFixedRange)
+        let v = FastMat.Vector(x, y, z, w)
+        var vc = CFastMat.Vector(x, y, z, w)
+        var h: Fixed = 0
+        var p: Fixed = 0
+        var hc: Fixed = 0
+        var pc: Fixed = 0
+        v.spaceAngle(&h, &p)
+        CFastMat.FindSpaceAngle(V2F(&vc), &hc, &pc)
+        #expect(h == hc)
+        #expect(p == pc)
+    }
+}
+
 @Test func testSquares() async throws {
     for _ in 0..<1000 {
         let a = Fixed.random(in: mediumFixedRange)
