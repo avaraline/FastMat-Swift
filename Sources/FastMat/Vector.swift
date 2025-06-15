@@ -23,6 +23,14 @@ extension Vector {
         )
     }
 
+    public init(_ x: Fixed = 0, _ y: Fixed = 0, _ z: Fixed = 0) {
+        self.init(x, y, z, 0)
+    }
+
+    public func negated() -> Vector {
+        return self &* -1
+    }
+
     public func length(_ terms: Int = 3) -> Fixed {
         var acc = SquareAccumulator()
         for i in 0..<terms {
@@ -31,6 +39,7 @@ extension Vector {
         return acc.squareRoot()
     }
 
+    @discardableResult
     public mutating func normalize(_ terms: Int = 3) -> Fixed {
         let l = self.length(terms)
         for i in 0..<terms {
@@ -39,7 +48,7 @@ extension Vector {
         return l
     }
 
-    func spaceAngle(_ heading: inout Fixed, _ pitch: inout Fixed) {
+    public func spaceAngle(_ heading: inout Fixed, _ pitch: inout Fixed) {
         var sideLen: Fixed
         let headingA = FOneArcTan2(self[2], self[0])
 

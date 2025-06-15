@@ -8,7 +8,7 @@ let package = Package(
     products: [
         .library(
             name: "FastMat",
-            targets: ["FastMat", "CFastMat"]
+            targets: ["FastMat"]
         )
     ],
     targets: [
@@ -17,8 +17,7 @@ let package = Package(
             sources: ["FastMat.c"]
         ),
         .target(
-            name: "FastMat",
-            dependencies: ["CFastMat"]
+            name: "FastMat"
         ),
         .testTarget(
             name: "FastMatTests",

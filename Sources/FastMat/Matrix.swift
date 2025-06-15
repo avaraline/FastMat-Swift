@@ -7,8 +7,10 @@
 
 extension MutableCollection {
     mutating func updateEach(_ update: (inout Element) -> Void) {
-        for i in indices {
+        var i = startIndex
+        while i != endIndex {
             update(&self[i])
+            formIndex(after: &i)
         }
     }
 }
@@ -35,7 +37,7 @@ public struct Matrix {
         columns = [.init(), .init(), .init(), .init()]
     }
 
-    subscript(i: Int) -> Vector {
+    public subscript(i: Int) -> Vector {
         get { columns[i] }
         set { columns[i] = newValue }
     }
@@ -48,10 +50,20 @@ public struct Matrix {
         }
     }
 
+    public static func identity() -> Matrix {
+        var m = Matrix()
+        m.reset(to: .identity)
+        return m
+    }
+
     public mutating func translate(_ dx: Fixed, _ dy: Fixed, _ dz: Fixed) {
         columns[3][0] += dx
         columns[3][1] += dy
         columns[3][2] += dz
+    }
+
+    public mutating func translate(_ v: Vector) {
+        translate(v[0], v[1], v[2])
     }
 
     public mutating func rotateX(_ s: Fixed, _ c: Fixed) {
@@ -132,5 +144,9 @@ public struct Matrix {
             }
         }
         return result
+    }
+
+    public static func * (lhs: Matrix, rhs: Matrix) -> Matrix {
+        lhs.multiply(rhs)
     }
 }
