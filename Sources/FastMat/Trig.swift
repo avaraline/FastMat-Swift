@@ -37,7 +37,7 @@ let arcTanOneTable: [Fixed] = {
     return Fixed(65536 * cos(Double(a) / 65536.0))
 }
 @inlinable public func FRadTan(_ a: Fixed) -> Fixed {
-    return Fixed(65536 * tan(Double(a) / 65536.0))
+    return Fixed(clamping: Int64(65536 * tan(Double(a) / 65536.0)))
 }
 
 // Full circle is 360.0 (fixed point)
@@ -48,7 +48,7 @@ let arcTanOneTable: [Fixed] = {
     return Fixed(65536.0 * cos(Double(a) / 3754936.206169363))
 }
 @inlinable public func FDegTan(_ a: Fixed) -> Fixed {
-    return Fixed(65536.0 * tan(Double(a) / 3754936.206169363))
+    return Fixed(clamping: Int64(65536.0 * tan(Double(a) / 3754936.206169363)))
 }
 
 // Full circle is 1.0 (fixed point)
@@ -59,7 +59,7 @@ let arcTanOneTable: [Fixed] = {
     return Fixed(65536.0 * cos(Double(a) / 10430.3783505))
 }
 @inlinable public func FOneTan(_ a: Fixed) -> Fixed {
-    return Fixed(65536.0 * tan(Double(a) / 10430.3783505))
+    return Fixed(clamping: Int64(65536.0 * tan(Double(a) / 10430.3783505)))
 }
 
 func FRadArcCos(_ n: Fixed) -> Fixed {

@@ -110,6 +110,26 @@ let mediumFixedRange = -Fixed(1 << 22)...Fixed(1 << 22)
     CFastMat.FreeAccumulator(cAcc)
 }
 
+func vectorEquals(_ v: FastMat.Vector, _ cv: CFastMat.Vector) -> Bool {
+    v.x == cv.0 && v.y == cv.1 && v.z == cv.2 && v.w == cv.3
+}
+
+@Test func testVectors() async throws {
+    for _ in 0..<1000 {
+        let x = Fixed.random(in: mediumFixedRange)
+        let y = Fixed.random(in: mediumFixedRange)
+        let z = Fixed.random(in: mediumFixedRange)
+        let w = Fixed.random(in: mediumFixedRange)
+        var v1 = FastMat.Vector(x, y, z, w)
+        var v2 = CFastMat.Vector(x, y, z, w)
+        #expect(vectorEquals(v1, v2))
+        let l1 = v1.normalize()
+        let l2 = CFastMat.NormalizeVector(3, V2F(&v2))
+        #expect(vectorEquals(v1, v2))
+        #expect(l1 == l2)
+    }
+}
+
 func zeroMatrix() -> CFastMat.Matrix {
     return CFastMat.Matrix(
         (Int32(0), Int32(0), Int32(0), Int32(0)),

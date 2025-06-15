@@ -75,6 +75,9 @@ static inline Fixed FDegToOne(Fixed angle) { return ((angle) / 360); }
 static inline Fixed FOneToRad(Fixed angle) { return FMul(angle, 41175); }
 static inline Fixed FRadToOne(Fixed angle) { return FMul(angle, 10430); }
 
+// Makes the unit tests in Swift *much* easier for some of these methods that take Fixed*
+static inline Fixed *V2F(Vector *v) { return v[0]; }
+
 void InitMatrix();
 
 void QuaternionToMatrix(Quaternion *q, Matrix *m);

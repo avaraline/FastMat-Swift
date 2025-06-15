@@ -30,14 +30,17 @@ public struct SquareAccumulator {
     var lowBits: UInt32 { UInt32(accBits & 0xFFFF_FFFF) } // acc[1]
     var highBits: UInt32 { UInt32(accBits >> 32) } // acc[0]
 
+    // FSquareAccumulate
     public mutating func accumulate(_ n: Fixed) {
         acc &+= Int64(n) * Int64(n)
     }
 
+    // FSquareSubtract
     public mutating func subtract(_ n: Fixed) {
         acc &-= Int64(n) * Int64(n)
     }
 
+    // FSqroot
     public func squareRoot() -> Fixed {
         var root: Fixed = 0
         var remHi: UInt32 = 0
