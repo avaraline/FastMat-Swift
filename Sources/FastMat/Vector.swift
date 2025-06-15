@@ -23,11 +23,19 @@ extension Vector {
         )
     }
 
-    public func length() -> Fixed {
-        0
+    public func length(_ terms: Int = 3) -> Fixed {
+        var acc = SquareAccumulator()
+        for i in 0..<terms {
+            acc.accumulate(self[i]);
+        }
+        return acc.squareRoot()
     }
 
-    public func normalize(_ terms: Int = 3) -> Fixed {
-        0
+    public mutating func normalize(_ terms: Int = 3) -> Fixed {
+        let l = self.length(terms)
+        for i in 0..<terms {
+            self[i] = FDiv(self[i], l)
+        }
+        return l
     }
 }

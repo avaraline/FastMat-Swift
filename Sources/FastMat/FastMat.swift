@@ -24,7 +24,7 @@ public let FTWOPI: Fixed = 411775
 }
 @inlinable public func Deg2Rad(_ deg: Float) -> Float { deg * PI / 180.0 }
 
-@inlinable public func FIX(_ n: Int) -> Fixed { Fixed(n * 65536) }
+@inlinable public func FIX<T: BinaryInteger>(_ n: T) -> Fixed { Fixed(n * 65536) }
 @inlinable public func FIX3(_ n: Int) -> Fixed { Fixed(n * 8192 / 125) }
 
 @inlinable public func FRound(_ n: Float) -> Fixed { Fixed(n.rounded()) }

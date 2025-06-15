@@ -84,6 +84,30 @@ let mediumFixedRange = -Fixed(1 << 22)...Fixed(1 << 22)
         let a = Fixed.random(in: mediumFixedRange)
         #expect(FastMat.FSqrt(a) == CFastMat.FSqrt(a))
     }
+
+    let cAcc = CFastMat.MakeAccumulator()
+    var acc = SquareAccumulator()
+
+    for _ in 0..<3 {
+        let v = FastMat.ToFixed(Float.random(in: 1...40))
+        acc.accumulate(v)
+        CFastMat.FSquareAccumulate(v, cAcc)
+        #expect(Int32(bitPattern: acc.highBits) == CFastMat.AccHigh(cAcc))
+        #expect(Int32(bitPattern: acc.lowBits) == CFastMat.AccLow(cAcc))
+    }
+
+    #expect(acc.squareRoot() == CFastMat.FSqroot(cAcc))
+
+    for _ in 0..<4 {
+        let v = FastMat.ToFixed(Float.random(in: 1...40))
+        acc.subtract(v)
+        CFastMat.FSquareSubtract(v, cAcc)
+        #expect(Int32(bitPattern: acc.highBits) == CFastMat.AccHigh(cAcc))
+        #expect(Int32(bitPattern: acc.lowBits) == CFastMat.AccLow(cAcc))
+    }
+
+    #expect(acc.squareRoot() == CFastMat.FSqroot(cAcc))
+    CFastMat.FreeAccumulator(cAcc)
 }
 
 func zeroMatrix() -> CFastMat.Matrix {
@@ -103,10 +127,12 @@ func matrixEquals(_ m1: FastMat.Matrix, _ m2: CFastMat.Matrix) -> Bool {
 }
 
 @Test func testMatrix() async throws {
-    var cm = zeroMatrix(), cmi = zeroMatrix()
+    var cm = zeroMatrix()
+    var cmi = zeroMatrix()
     CFastMat.OneMatrix(&cm)
 
-    var m = FastMat.Matrix(), i = FastMat.Matrix()
+    var m = FastMat.Matrix()
+    var i = FastMat.Matrix()
     m.reset(to: .identity)
 
     #expect(matrixEquals(m, cm))

@@ -11,6 +11,7 @@
 
 #include <math.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef int32_t Fixed;
 
@@ -100,6 +101,16 @@ Fixed FOneArcTan2(Fixed x, Fixed y);
 
 void FindSpaceAngle(Fixed *delta, Fixed *heading, Fixed *pitch);
 void FindSpaceAngleAndNormalize(Fixed *delta, Fixed *heading, Fixed *pitch);
+
+static inline int *MakeAccumulator() {
+    int *acc = (int *)malloc(sizeof(int) * 2);
+    acc[0] = 0;
+    acc[1] = 0;
+    return acc;
+}
+static inline int AccHigh(int *acc) { return acc[0]; }
+static inline int AccLow(int *acc) { return acc[1]; }
+static inline void FreeAccumulator(int *acc) { free(acc); }
 
 Fixed FSqroot(int *ab);
 Fixed FSqrt(Fixed n);
